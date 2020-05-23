@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Things From the Future</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="/style.css">
+  </head>  
+  <body>
+    <header>
+      <h1>
+        THE THING FROM THE FUTURE
+      </h1>
+      <p>
+        An imagination game to collaboratively and 
+        competitively describe objects from a range of 
+        alternative futures
+      </p>
+      
+     
+    
+    </header>
+
+    
+    <cards>
+      
+     <div class="card-container">
+        <div class="card-back">
+          <div class="card-symbol"></div>
+          <p>
+          
+          </p>
+          <h2 class="inner-text"></h2>
+          <p>
+            
+          </p>
+        </div>
+      </div>
+      
+     <div class="card-container">
+        <div class="card-back">
+          <div class="card-symbol"></div>
+          <p>
+            
+          </p>
+          <h2 class="inner-text"></h2>
+          <p>
+          </p>
+        </div>
+      </div>
+      
+     <div class="card-container">
+        <div class="card-back">
+          <div class="card-symbol"></div>
+          <p>
+            
+          </p>
+          <h2 class="inner-text"></h2>
+          <p>
+          </p>
+        </div>
+      </div>
+      
+     <div class="card-container">
+        <div class="card-back">
+          <div class="card-symbol"></div>
+          <p>
+            
+          </p>
+          <h2 class="inner-text"></h2>
+          <p>
+          </p>
+        </div>
+      </div>
+    </cards>
+    
+   <div id="deal">
+      <button id="sendButton">DEAL CARDS</button>
+    </div>
+    
+    <button id="button">
+      START GAME
+    </button>
+    
+    <div class="timer">
+      <div id="background"></div>
+    </div>
+    
+    
+      <div class="about">
+        <p>
+          This is an adapted version of the game to be played together online. Once everybody has opened the game
+          in the browser one player presses deal and all the players should see that rounds cards. When your
+          ready to start press the timer and write about your imagined thing from the future 
+          until the buzzer sounds. Share your things from the future. The winner is the
+          person who has written the best story, as decided by the players.
+          Press deal again for a new set of cards.
+        </p>
+        <p>
+          It is licensed under the creative commons license CC BY-NC-SA 2.0 
+          <a href="https://creativecommons.org/licenses/by-nc-sa/2.0/" title="A link to the creative commons page">
+          click here</a> to view the license 
+          or <a href="http://situationlab.org/project/the-thing-from-the-future/" title="A link to the things from the future website">
+          click here</a> to view the games web site.
+        </p>
+      </div>
+    
+    <div id="play">
+      <h2>
+        HOW TO PLAY
+      </h2>
+      
+      <h3>THE CARDS</h3>
+      <p>
+        There are four types of cards in The Thing From The Future: 
+        Society, Context, Object, and Mood. Each round, one player will generate 
+        a four-card creative prompt containing one of each kind of card. 
+        Based on this prompt, players will imagine a thing from the future.
+      </p>
+
+     <h4>SOCIETY CARDS</h4>
+      <p>    
+        SOCIETY cards broadly describe different kinds of possible societies. 
+        These cards contain two kinds of information. The main (top) text of 
+        each society card specifies one of four generic images of alternative 
+        futures for players to imagine: Grow, Collapse, Discipline, 
+        or Transform. Underneath that is how far ahead in the future it is from now.
+      </p>
+      <div id="card-description">
+
+        <p>
+          <b>Grow </b>is a kind of future in which everything and everyone 
+          keeps climbing: population, production, consumption.
+        </p>
+        <p>
+          <b>Collapse</b> is a kind of future in which 
+          life as we know it has fallen – or is falling – apart.
+        </p>
+        <p>
+          <b>Discipline</b> is a kind of future in which things are carefully 
+          managed by concerted coordination, perhaps top-down or perhaps 
+          collaboratively.
+        </p>
+        <p>
+          <b>Transform</b> is a kind of future in which a profound historical transition 
+          has occurred, whether spiritual or technological in nature.
+        </p>
+      </div>
+      <h4>CONTEXT CARDS</h4>
+      <p>    
+        CONTEXT cards describe contexts, places, and topic areas. In a 
+        completed prompt, the terrain card describes where – physically or 
+        conceptually – the thing from the future might be found. 
+      </p>
+      <h4>OBJECT CARDS</h4>
+      <p>    
+        OBJECT cards describe the basic form of the thing from the future.
+      </p>
+      <h4>MOOD CARDS</h4>
+      <p>    
+        MOOD cards describe emotions that the thing from the future 
+        might evoke in an observer from the present.      
+      </p>
+    </div>
+     
+    <script>
+      
+      var dealButton = document.getElementById('sendButton');
+      var startButton = document.getElementById('button');
+      var timerPosition = document.getElementById('background');
+      var audio = new Audio("https://cdn.glitch.com/da901263-7822-4876-b51f-aa343c0b85b6%2F316843__lalks__alarm-03-short.wav?v=1589613004284"); 
+     
+      
+      var socket = io();
+      
+      startButton.disabled = true; 
+      
+      
+      socket.on('deal cards', function(cards){
+        if(cards.length === 0){
+           console.log('empty array');
+           } else {
+                
+          var cardElements = document.getElementsByClassName("card-back");
+             
+          startButton.disabled = false;
+      
+          for(var i = 0; i < cardElements.length; i++){
+
+                var typeOfCard = cards[i];
+
+                var x = Math.floor(Math.random() * (typeOfCard.length -1)) + 1;
+
+                cardElements[i].getElementsByClassName("card-symbol")[0].innerHTML = typeOfCard.letter;
+                cardElements[i].getElementsByTagName("p")[0].innerHTML = typeOfCard.name;
+
+                cardElements[i].getElementsByTagName("h2")[0].innerHTML = typeOfCard.item;
+                cardElements[i].getElementsByTagName("p")[1].innerHTML = typeOfCard.timeFrame;
+
+              }
+           }
+      });
+      
+      document.getElementById("deal").addEventListener('click', function(){
+        socket.emit('deal');
+      });
+      //CODE FOR THE TIMER
+      startButton.addEventListener('click', function(){
+        socket.emit('start timer');
+      });
+      
+      socket.on('freeze buttons', function(){
+        startButton.disabled = true; 
+        dealButton.disabled = true;
+      });
+
+      socket.on('timer go', function(incriment){
+        timerPosition.style.width = incriment + "%";
+      });
+
+
+
+      socket.on('timer reset', function(){
+        dealButton.disabled = false;
+        audio.play();
+      });
+      
+    </script>
+  </body>
+</html>
